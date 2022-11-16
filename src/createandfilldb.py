@@ -29,10 +29,46 @@ def Add_Spectrum(year, name, filename):
         filename=filename,
         year_id=spYear.id)
     session.add(additem)
-    session.commit()    
+    session.commit()
+def FetchAll(fetch_yr = False, fetch_sp = False):
+    if fetch_yr:
+        items = session.query(SPYear).all()
+        for item in items:
+            print ("ID:", item.id)
+            print ("SPName:", item.name)
+        return items
+
+    if fetch_sp:
+        items = session.query(Spectrum).all()
+        for item in items:
+            print ("Item ID:", item.id)
+            print ("Name:", item.name)
+            print ("Filename", item.filename)
+            print ("Year Id", item.year_id)
+        return items
+def FetchSameYear():
+    spyears = session.query(SPYear).all()
+    myDict = {}
+    for p in spyears:
+    
+        key = p.name
+        year_id = p.id
+
+        # Select all car models that belong to a car brand
+        q = session.query(Spectrum).filter_by(year_id=year_id).all()
+    
+        # build the structure (lst_c) that includes the names of the car models that belong to the car brand
+        lst_c = []
+        for c in q:
+            lst_c.append( c.name)
+        myDict[key] = lst_c
+    return myDict
 
 if __name__ == '__main__':
     print('ELLO')
-    Create_SPYear('1951')
-    Add_Spectrum('1951', 'jfj1951', 'jfj1951.dat')
+    #Create_SPYear('1950')
+    #Add_Spectrum('1950', 'jfj1950', 'jfj1950.dat')
+    #FetchAll(False, True)
+    print(FetchSameYear())
+
 

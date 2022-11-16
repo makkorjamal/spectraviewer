@@ -7,6 +7,7 @@ import sqlalchemy
 
 from flask import Flask, render_template, request, jsonify
 import json
+from createandfilldb import FetchSameYear
 
 # Initialize the Flask application
 app = Flask(__name__, template_folder="webgui")
@@ -18,37 +19,7 @@ def get_dropdown_values():
 could be defined globally
     """
 
-    # Create a dictionary (myDict) where the key is 
-    # the name of the brand, and the list includes the names of the car models
-    # 
-    # Read from the database the list of cars and the list of models. 
-    # With this information, build a dictionary that includes the list of models by brand. 
-    # This dictionary is used to feed the drop down boxes of car brands and car models that belong to a car brand.
-    # 
-    # Example:
-    #
-    # {'Toyota': ['Tercel', 'Prius'], 
-    #  'Honda': ['Accord', 'Brio']}
-
-    #carbrands = Carbrands.query.all()
-    # Create an empty dictionary
-    myDict = {}
-    for p in carbrands:
-    
-        key = p.brand_name
-        brand_id = p.brand_id
-
-        # Select all car models that belong to a car brand
-        q = Carmodels.query.filter_by(brand_id=brand_id).all()
-    
-        # build the structure (lst_c) that includes the names of the car models that belong to the car brand
-        lst_c = []
-        for c in q:
-            lst_c.append( c.car_model )
-        myDict[key] = lst_c
-    
-    
-    class_entry_relations = myDict
+    class_entry_relations = FetchSameYear() 
                         
     return class_entry_relations
 
