@@ -6,14 +6,14 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1 class="text-center text-muted">Dynamic dropdowns</h1>
+        <h1 class="text-center text-muted">Spectra Plotter</h1>
       </div>
 
       <br><br><br>
 
       <div class="row">
         <div class="form-group col-xs-6">
-          <label for="all_classes">Select a car</label>
+          <label for="all_classes">Select a year</label>
           <select class="form-control" style="color: white; background: #34568B;" id="all_classes">
             {% for o in all_classes %}
                     <option value="{{ o }}">{{ o }}</option>
@@ -21,7 +21,7 @@
           </select>
         </div>
         <div class="form-group col-xs-6">
-          <label for="all_entries">Select a model</label>
+          <label for="all_entries">Select a spectrum</label>
           <select class="form-control" style="color:white; background:#009B77;" id="all_entries">
             {% for o in all_entries %}
                     <option value="{{ o }}">{{ o }}</option>
@@ -31,7 +31,7 @@
       </div>
 
       <div>
-        <button type="button" style="color:white; background:#3498DB;" id="process_input">Process selection!</button>
+        <button type="button" style="color:white; background:#3498DB;" id="process_input">Plot!</button>
       </div><br><br>
       <div id="processed_results">
         Here we display some output based on the selection

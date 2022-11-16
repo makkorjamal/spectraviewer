@@ -12,16 +12,12 @@ connection = engine.connect()
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-def readfiles(sp_path):
-    file_path = os.path.join(sp_path)
-    sp_files = glob(file_path + '*.dat')
-    years = [datetime.strptime(file.split('_')[1], '%d%m%Y%H%M%S%f') for file in sp_files]
-    sp_dic = [{'year': yr.year, 'filename':fn} for yr, fn in zip(years, sp_files)]   
-    return sp_dic
+
 def Create_SPYear(year):
     spYear = SPYear(name=year)
     session.add(spYear)
     session.commit()
+
 def Add_Spectrum(year, name, filename):
     spYear = session.query(SPYear).filter_by(name=year).one()
     additem = Spectrum(
@@ -30,6 +26,21 @@ def Add_Spectrum(year, name, filename):
         year_id=spYear.id)
     session.add(additem)
     session.commit()
+
+def filldb(sp_path):
+    file_path = os.path.join(sp_path)
+
+    sp_files = glob(file_path + '*.dat')
+    Create_SPYear('1950')
+    Create_SPYear('1951')
+    for sp_file in zip(sp_files):
+        sp_file = sp_file[0]
+        year =datetime.strptime(sp_file.split('_')[1], '%d%m%Y%H%M%S%f').year 
+        if year == 1950:
+            Add_Spectrum(year,sp_file.split('_')[1], sp_file)
+        if year == 1951:
+            Add_Spectrum(year,sp_file.split('_')[1], sp_file)
+
 def FetchAll(fetch_yr = False, fetch_sp = False):
     if fetch_yr:
         items = session.query(SPYear).all()
@@ -69,6 +80,7 @@ if __name__ == '__main__':
     #Create_SPYear('1950')
     #Add_Spectrum('1950', 'jfj1950', 'jfj1950.dat')
     #FetchAll(False, True)
-    print(FetchSameYear())
+    filldb('data/')
+
 
 
