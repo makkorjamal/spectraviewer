@@ -18,6 +18,7 @@ class Spectrum(Base):
 
 
     name =Column(String(80), nullable = False)
+    date =Column(String(120), nullable = False)
     id = Column(Integer, primary_key = True)
     filename = Column(String(250))
     year_id = Column(Integer,ForeignKey('spyear.id'))

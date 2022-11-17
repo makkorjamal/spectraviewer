@@ -46,22 +46,22 @@ def update_dropdown():
 def process_data():
     selected_class = request.args.get('selected_class', type=str)
     selected_entry = request.args.get('selected_entry', type=str)
-    _,_,filename=FindFilname(selected_entry)
+    _,_,_,filename=FindFilname(selected_entry)
     #jsonified = jsonify(random_text="Year {} file {} and filename {} selected.".format(selected_class, selected_entry, filename))
     #sp_plotter(filename)
     intensity, wavenumbers = read_cal_spec(filename)
     jsonified = jsonify(intensity = intensity.tolist(), wavenumbers=np.round(wavenumbers,1).tolist())
     return jsonified
 
-def sp_plotter(filename):
+# def sp_plotter(filename):
 
-    intensity, wavenumbers = read_cal_spec(filename)
-    sptuples = list(zip(wavenumbers, intensity))
-    df = pd.DataFrame(sptuples, columns = ['wavenumber', 'intensity'])
-    fig = px.line(df, x="wavenumber", y="intensity", title='Blah')
+#     intensity, wavenumbers = read_cal_spec(filename)
+#     sptuples = list(zip(wavenumbers, intensity))
+#     df = pd.DataFrame(sptuples, columns = ['wavenumber', 'intensity'])
+#     fig = px.line(df, x="wavenumber", y="intensity", title='Blah')
 
-    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return graphJSON
+#     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+#     return graphJSON
 
 @app.route('/')
 def index():

@@ -18,11 +18,12 @@ def Create_SPYear(year):
     session.add(spYear)
     session.commit()
 
-def Add_Spectrum(year, name, filename):
+def Add_Spectrum(year, name, date, filename):
     spYear = session.query(SPYear).filter_by(name=year).one()
     additem = Spectrum(
         name=name,
         filename=filename,
+        date=date,
         year_id=spYear.id)
     session.add(additem)
     session.commit()
@@ -35,11 +36,13 @@ def filldb(sp_path):
     Create_SPYear('1951')
     for sp_file in zip(sp_files):
         sp_file = sp_file[0]
+        date =datetime.strptime(sp_file.split('_')[1], '%d%m%Y%H%M%S%f')
+        str_date = datetime.strftime(date,'%d/%m/%y %H:%M')
         year =datetime.strptime(sp_file.split('_')[1], '%d%m%Y%H%M%S%f').year 
         if year == 1950:
-            Add_Spectrum(year,sp_file.split('_')[1], sp_file)
+            Add_Spectrum(year,sp_file.split('_')[1], str_date, sp_file)
         if year == 1951:
-            Add_Spectrum(year,sp_file.split('_')[1], sp_file)
+            Add_Spectrum(year,sp_file.split('_')[1],str_date, sp_file)
 
 def FetchAll(fetch_yr = False, fetch_sp = False):
     if fetch_yr:
@@ -55,6 +58,7 @@ def FetchAll(fetch_yr = False, fetch_sp = False):
             print ("Item ID:", item.id)
             print ("Name:", item.name)
             print ("Filename", item.filename)
+            print ("Date", item.date)
             print ("Year Id", item.year_id)
         return items
 def FetchSameYear():
@@ -71,20 +75,16 @@ def FetchSameYear():
         # build the structure (lst_c) that includes the names of the car models that belong to the car brand
         lst_c = []
         for c in q:
-            lst_c.append( c.name)
+            lst_c.append( c.date)
         myDict[key] = lst_c
     return myDict
-def FindFilname(sp_name):
-    item = session.query(Spectrum).filter_by(name=sp_name).one()
-    return item.id, item.name, item.filename
+def FindFilname(sp_date):
+    item = session.query(Spectrum).filter_by(date=sp_date).one()
+    return item.id, item.name,item.date, item.filename
 
 if __name__ == '__main__':
     print('ELLO')
-    #Create_SPYear('1950')
-    #Add_Spectrum('1950', 'jfj1950', 'jfj1950.dat')
-    #FetchAll(False, True)
-    #filldb('data/')
-    FindFilname('13091950101400')
 
+    filldb('data/')
 
 
