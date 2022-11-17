@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance for spectra server
+After=network.target
+
+[Service]
+User=jamal
+Group=www-data
+WorkingDirectory=/home/jamal/venv/spectraviewer/src
+Environment="PATH=/home/jamal/anaconda3/bin"
+ExecStart=/home/jamal/anaconda3/envs/wappenv/bin/gunicorn --bind 127.0.0.1:4999 wsgi:app
+
+[Install]
+WantedBy=multi-user.target

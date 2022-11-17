@@ -64,7 +64,6 @@
 
 
             }).success(function(data) {
-                $('#processed_results').text(data.wavenumbers);
                 myFunc(data.intensity, data.wavenumbers)
             })
           return false;
@@ -80,7 +79,7 @@
             data: {
               labels: labels, 
               datasets: [{
-                label: '# of Votes',
+                label: 'Specta from Jungfraujoch',
                 data: data, // Data on Y axis
                 borderWidth: 1
             }]

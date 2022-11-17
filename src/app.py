@@ -50,8 +50,7 @@ def process_data():
     #jsonified = jsonify(random_text="Year {} file {} and filename {} selected.".format(selected_class, selected_entry, filename))
     #sp_plotter(filename)
     intensity, wavenumbers = read_cal_spec(filename)
-    jsonified = jsonify(intensity = intensity.tolist(), wavenumbers=wavenumbers.tolist())
-    print(jsonified)
+    jsonified = jsonify(intensity = intensity.tolist(), wavenumbers=np.round(wavenumbers,1).tolist())
     return jsonified
 
 def sp_plotter(filename):
