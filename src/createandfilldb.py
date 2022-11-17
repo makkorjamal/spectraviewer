@@ -74,13 +74,17 @@ def FetchSameYear():
             lst_c.append( c.name)
         myDict[key] = lst_c
     return myDict
+def FindFilname(sp_name):
+    item = session.query(Spectrum).filter_by(name=sp_name).one()
+    return item.id, item.name, item.filename
 
 if __name__ == '__main__':
     print('ELLO')
     #Create_SPYear('1950')
     #Add_Spectrum('1950', 'jfj1950', 'jfj1950.dat')
     #FetchAll(False, True)
-    filldb('data/')
+    #filldb('data/')
+    FindFilname('13091950101400')
 
 
 

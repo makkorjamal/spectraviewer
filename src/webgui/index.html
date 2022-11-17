@@ -34,11 +34,16 @@
         <button type="button" style="color:white; background:#3498DB;" id="process_input">Plot!</button>
       </div><br><br>
       <div id="processed_results">
-        Here we display some output based on the selection
+        Choose the year and the filename to plot
       </div>
+      <div>
+        <canvas id="myChart" width="200" height="80"></canvas>
+      </div>
+
     </div>
     <script src="https://code.jquery.com/jquery-1.12.4.js" type="text/javascript"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
 
@@ -59,13 +64,31 @@
 
 
             }).success(function(data) {
-                $('#processed_results').text(data.random_text);
+                $('#processed_results').text(data.wavenumbers);
+                myFunc(data.intensity, data.wavenumbers)
             })
           return false;
 
         });
       });
     </script>
+    <script>
+          function myFunc(data, labels) {
+                  const ctx = document.getElementById('myChart').getContext('2d');
+          const myChart = new Chart(ctx, {
+          type: 'line',
+            data: {
+              labels: labels, 
+              datasets: [{
+                label: '# of Votes',
+                data: data, // Data on Y axis
+                borderWidth: 1
+            }]
+            }
+          });
+          }
+
+</script>
   </body>
 </html>
 
