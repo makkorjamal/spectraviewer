@@ -73,7 +73,11 @@
     </script>
     <script>
           function myFunc(data, labels) {
-                  const ctx = document.getElementById('myChart').getContext('2d');
+            var plotButton = document.getElementById("process_input");
+            plotButton.addEventListener("click", function(){
+            myChart.destroy();
+            });
+          const ctx = document.getElementById('myChart').getContext('2d');
           const myChart = new Chart(ctx, {
           type: 'line',
             data: {
@@ -83,9 +87,38 @@
                 data: data, // Data on Y axis
                 borderWidth: 1
             }]
+            },
+          options: {
+            // All of these (default) events trigger a hover and are passed to all plugins,
+            // unless limited at plugin options
+            events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+            plugins: {
+              tooltip: {
+                // Tooltip will only receive click events
+                events: ['click']
+              }
             }
+          }
           });
           }
+          function plotlyPlot(data, labels) {
+              var trace1 = {
+                x:labels,
+                y: data,
+                type: 'scatter',
+                type: 'line',
+                mode: 'lines+markers',
+                marker: { size: 3 }
+              };
+              var data = [trace1];
+              var layout = {
+                title: 'Jungfraujoch spectra from 1950/1951',
+                showlegend: false
+
+              };
+            Plotly.newPlot('tester', data, layout, {scrollZoom: true});
+          }
+
 
 </script>
   </body>

@@ -53,16 +53,6 @@ def process_data():
     jsonified = jsonify(intensity = intensity.tolist(), wavenumbers=np.round(wavenumbers,1).tolist())
     return jsonified
 
-# def sp_plotter(filename):
-
-#     intensity, wavenumbers = read_cal_spec(filename)
-#     sptuples = list(zip(wavenumbers, intensity))
-#     df = pd.DataFrame(sptuples, columns = ['wavenumber', 'intensity'])
-#     fig = px.line(df, x="wavenumber", y="intensity", title='Blah')
-
-#     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-#     return graphJSON
-
 @app.route('/')
 def index():
 
