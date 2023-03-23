@@ -22,7 +22,7 @@ def Create_SPYear(year):
     session.add(spYear)
     session.commit()
 
-def Add_Spectrum(year, name, date, filename):
+def Add_Spectrum(year, name, date, sp_filename, dg_filename, im_filename):
     """
     Each year contains multiple measurements (Spectra)
     Each spectrum in the the database need to be initialised
@@ -32,7 +32,9 @@ def Add_Spectrum(year, name, date, filename):
     spYear = session.query(SPYear).filter_by(name=year).one()
     additem = Spectrum(
         name=name,
-        filename=filename,
+        sp_filename=sp_filename,
+        dg_filename=dg_filename,
+        im_filename=im_filename,
         date=date,
         year_id=spYear.id)
     session.add(additem)
@@ -43,9 +45,11 @@ def filldb(sp_path):
     This function reads the spectra files and fill the database
     The tables 1950/51 are filled here
     """
-    #file_path = os.path.join(sp_path)
+    cal_path = os.path.join(sp_path,'cal')
+    dig_path = os.path.join(sp_path,'dig')
+    pic_path = os.path.join(sp_path,'images')
 
-    sp_files = glob(f"{sp_path}" + "/*.dat")
+    sp_files = glob(f"{cal_path}" + "/*.dat")
     print(sp_files)
     Create_SPYear('1950')
     Create_SPYear('1951')
@@ -53,11 +57,18 @@ def filldb(sp_path):
         sp_file = sp_file[0]
         date =datetime.strptime(sp_file.split('_')[1], '%d%m%Y%H%M%S%f')
         str_date = datetime.strftime(date,'%d/%m/%y %H:%M')
-        year =datetime.strptime(sp_file.split('_')[1], '%d%m%Y%H%M%S%f').year 
+        year =date.year 
         if year == 1950:
-            Add_Spectrum(year,sp_file.split('_')[1], str_date, sp_file)
+            name = sp_file.split('_')[1]
+            dg_file = os.path.join(dig_path,f"{name}.dat")
+            im_file = os.path.join(pic_path,f"{name}.jpg")
+            Add_Spectrum(year,name, str_date, sp_file, dg_file, im_file)
         if year == 1951:
-            Add_Spectrum(year,sp_file.split('_')[1],str_date, sp_file)
+            name = sp_file.split('_')[1]
+            dg_file = os.path.join(dig_path,f"{name}.dat")
+            im_file = os.path.join(pic_path,f"{name}.jpg")
+            name = sp_file.split('_')[1]
+            Add_Spectrum(year,name,str_date, sp_file, dg_file, im_file)
 
 def FetchAll(fetch_yr = False, fetch_sp = False):
     """
@@ -99,13 +110,11 @@ def FetchSameYear():
     return spDict
 def FindFilname(sp_date):
     item = session.query(Spectrum).filter_by(date=sp_date).one()
-    return item.id, item.name,item.date, item.filename
+    return item.id, item.name,item.date, item.sp_filename, item.dg_filename, item.im_filename
 
 if __name__ == '__main__':
     print('ELLO')
     panth = os.path.join('static','data')
-    print(panth)
-    #filldb(os.path.join('static','data'))
     filldb(panth)
 
 

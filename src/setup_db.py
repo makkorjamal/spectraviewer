@@ -1,5 +1,3 @@
-import os
-import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -20,7 +18,9 @@ class Spectrum(Base):
     name =Column(String(80), nullable = False)
     date =Column(String(120), nullable = False)
     id = Column(Integer, primary_key = True)
-    filename = Column(String(250))
+    sp_filename = Column(String(250))
+    dg_filename = Column(String(250))
+    im_filename = Column(String(250))
     year_id = Column(Integer,ForeignKey('spyear.id'))
     spyear = relationship(SPYear) 
 

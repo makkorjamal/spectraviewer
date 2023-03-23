@@ -67,7 +67,7 @@
 
 
             }).success(function(data) {
-                chartPlotter(data.intensity, data.wavenumbers)
+                chartPlotter(data.intensity, data.wavenumbers, data.digitized_spec,data.digitized_lbl, data.im_filename)
             })
           return false;
 
@@ -75,7 +75,7 @@
       });
     </script>
     <script>
-          function chartPlotter(data, labels) {
+          function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename) {
             plotButton = document.getElementById("process_input");
             plotButton.addEventListener("click", function(){
             calChart.destroy();
@@ -86,10 +86,10 @@
             calChart = new Chart(cal_ctx, {
             type: 'line',
               data: {
-                labels: labels, 
+                labels: sp_labels, 
                 datasets: [{
                   label: 'Calibrated Spectrum',
-                  data: data, // Data on Y axis
+                  data: data_cal, // Data on Y axis
                   borderWidth: 1,
                   fill: false,
                   borderColor: "#0000ff",
@@ -126,7 +126,7 @@
                 ctx.lineDashOffset = options.borderDashOffset;
                 ctx.strokeRect(left, top, width, height);
                 const image = new Image();
-                image.src = "static/images/1870_1884.jpg";
+                image.src = im_filename;
                 ctx.drawImage(image, left,top, width, height);
                 ctx.restore();
                 }
@@ -134,11 +134,12 @@
             digChart = new Chart(dig_ctx, {
             type: 'line',
               data: {
-                labels: labels, 
+                labels: dig_labels, 
                 datasets: [{
                   label: 'Digitized Spectrum',
-                  data: data, // Data on Y axis
-                  borderWidth: 1
+                  data: data_dig, // Data on Y axis
+                  borderWidth: 1,
+                  pointRadius: 1,
               }]
               },
               plugins: [ chartAreaBorder ],
@@ -146,7 +147,7 @@
                 plugins: {
                   chartAreaBorder: {
                     borderColor: 'red',
-                    borderWidth: 2,
+                    borderWidth: 1,
                     borderDash: [ 5, 5 ],
                     borderDashOffset: 2,
                   }
