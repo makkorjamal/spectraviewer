@@ -13,17 +13,17 @@
 
       <div class="row">
         <div class="form-group col-xs-6">
-          <label for="all_classes">Select a year</label>
-          <select class="form-control" style="color: white; background: #34568B;" id="all_classes">
-            {% for o in all_classes %}
+          <label for="years">Select a year</label>
+          <select class="form-control" style="color: white; background: #34568B;" id="years">
+            {% for o in years %}
                     <option value="{{ o }}">{{ o }}</option>
             {% endfor %}
           </select>
         </div>
         <div class="form-group col-xs-6">
-          <label for="all_entries">Select a spectrum</label>
-          <select class="form-control" style="color:white; background:#009B77;" id="all_entries">
-            {% for o in all_entries %}
+          <label for="spectra">Select a spectrum</label>
+          <select class="form-control" style="color:white; background:#009B77;" id="spectra">
+            {% for o in spectra %}
                     <option value="{{ o }}">{{ o }}</option>
             {% endfor %}
           </select>
@@ -37,34 +37,37 @@
         Choose the year and the filename to plot
       </div>
       <div>
-        <canvas id="myChart" width="200" height="80"></canvas>
+        <canvas id="calChart" width="200" height="80"></canvas>
       </div>
-
+      <div>
+        <canvas id="digChart" width="200" height="80"></canvas>
+      </div>
     </div>
     <script src="https://code.jquery.com/jquery-1.12.4.js" type="text/javascript"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.0/chart.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
 
-        $('#all_classes').change(function(){
+        $('#years').change(function(){
 
           $.getJSON('/_update_dropdown', {
-            selected_class: $('#all_classes').val()
+            selected_year: $('#years').val()
 
           }).success(function(data) {
-                $('#all_entries').html(data.html_string_selected);
+                $('#spectra').html(data.html_string_selected);
            })
         });
         $('#process_input').bind('click', function() {
 
             $.getJSON('/_process_data', {
-                selected_class: $('#all_classes').val(),
-                selected_entry: $('#all_entries').val(),
+                selected_year: $('#years').val(),
+                selected_spectrum: $('#spectra').val(),
 
 
             }).success(function(data) {
-                myFunc(data.intensity, data.wavenumbers)
+                chartPlotter(data.intensity, data.wavenumbers)
             })
           return false;
 
@@ -72,54 +75,86 @@
       });
     </script>
     <script>
-          function myFunc(data, labels) {
-            var plotButton = document.getElementById("process_input");
+          function chartPlotter(data, labels) {
+            plotButton = document.getElementById("process_input");
             plotButton.addEventListener("click", function(){
-            myChart.destroy();
+            calChart.destroy();
+            digChart.destroy();
             });
-          const ctx = document.getElementById('myChart').getContext('2d');
-          const myChart = new Chart(ctx, {
-          type: 'line',
-            data: {
-              labels: labels, 
-              datasets: [{
-                label: 'Specta from Jungfraujoch',
-                data: data, // Data on Y axis
-                borderWidth: 1
-            }]
-            },
-          options: {
-            // All of these (default) events trigger a hover and are passed to all plugins,
-            // unless limited at plugin options
-            events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
-            plugins: {
-              tooltip: {
-                // Tooltip will only receive click events
-                events: ['click']
+            cal_ctx = document.getElementById('calChart').getContext('2d');
+            dig_ctx = document.getElementById('digChart').getContext('2d');
+            calChart = new Chart(cal_ctx, {
+            type: 'line',
+              data: {
+                labels: labels, 
+                datasets: [{
+                  label: 'Calibrated Spectrum',
+                  data: data, // Data on Y axis
+                  borderWidth: 1,
+                  fill: false,
+                  borderColor: "#0000ff",
+                  lineTension: 0.4,
+                  backgroundColor: "#0000ff",
+                  pointBackgroundColor: "#0000ff",
+                  pointBorderColor: "#0000ff",
+                  pointHoverBackgroundColor: "#0000ff",
+                  pointHoverBorderColor: "#0000ff",
+                  pointRadius: 0
+              }]
+              },
+            options: {
+              // All of these (default) events trigger a hover and are passed to all plugins,
+              // unless limited at plugin options
+              events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+              plugins: {
+                tooltip: {
+                  // Tooltip will only receive click events
+                  events: ['click']
+                }
               }
             }
-          }
+            });
+            const chartAreaBorder = {
+                id: 'chartAreaBorder',
+
+                beforeDraw(chart, args, options) {
+                const { ctx, chartArea: { left, top, width, height } } = chart;
+                ctx.save();
+                ctx.strokeStyle = options.borderColor;
+                ctx.lineWidth = options.borderWidth;
+                ctx.setLineDash(options.borderDash || []);
+                ctx.lineDashOffset = options.borderDashOffset;
+                ctx.strokeRect(left, top, width, height);
+                const image = new Image();
+                image.src = "static/images/1870_1884.jpg";
+                ctx.drawImage(image, left,top, width, height);
+                ctx.restore();
+                }
+              };
+            digChart = new Chart(dig_ctx, {
+            type: 'line',
+              data: {
+                labels: labels, 
+                datasets: [{
+                  label: 'Digitized Spectrum',
+                  data: data, // Data on Y axis
+                  borderWidth: 1
+              }]
+              },
+              plugins: [ chartAreaBorder ],
+              options: {
+                plugins: {
+                  chartAreaBorder: {
+                    borderColor: 'red',
+                    borderWidth: 2,
+                    borderDash: [ 5, 5 ],
+                    borderDashOffset: 2,
+                  }
+                }
+              },
+
           });
           }
-          function plotlyPlot(data, labels) {
-              var trace1 = {
-                x:labels,
-                y: data,
-                type: 'scatter',
-                type: 'line',
-                mode: 'lines+markers',
-                marker: { size: 3 }
-              };
-              var data = [trace1];
-              var layout = {
-                title: 'Jungfraujoch spectra from 1950/1951',
-                showlegend: false
-
-              };
-            Plotly.newPlot('tester', data, layout, {scrollZoom: true});
-          }
-
-
 </script>
   </body>
 </html>

@@ -1,14 +1,9 @@
 
 
-from flask_sqlalchemy  import SQLAlchemy
-import sqlalchemy
-
 # app.py
 
 from flask import Flask, render_template, request, jsonify
-import json
-import plotly
-import plotly.express as px
+import os
 from createandfilldb import FetchSameYear, FindFilname
 from utilfnc import read_cal_spec
 import numpy as np
@@ -17,7 +12,9 @@ import pandas as pd
 # Initialize the Flask application
 
 global intensity, wavenumbers
+spimages = os.path.join('static', 'images')
 app = Flask(__name__, template_folder="webgui")
+app.config['UPLOAD_FOLDER'] = spimages
 def get_dropdown_values():
 
     class_entry_relations = FetchSameYear() 
@@ -27,30 +24,26 @@ def get_dropdown_values():
 
 @app.route('/_update_dropdown')
 def update_dropdown():
-
-    # the value of the first dropdown (selected by the user)
-    selected_class = request.args.get('selected_class', type=str)
-
-    # get values for the second dropdown
-    updated_values = get_dropdown_values()[selected_class]
-
-    # create the value sin the dropdown as a html string
+    """
+    Flask function to publich the values from the database in the drop down menu
+    """
+    selected_year = request.args.get('selected_year', type=str)
+    updated_values = get_dropdown_values()[selected_year]
     html_string_selected = ''
     for entry in updated_values:
-        html_string_selected += '<option value="{}">{}</option>'.format(entry, entry)
+        html_string_selected += f'<option value="{entry}">{entry}</option>'
 
     return jsonify(html_string_selected=html_string_selected)
 
 
 @app.route('/_process_data')
 def process_data():
-    selected_class = request.args.get('selected_class', type=str)
-    selected_entry = request.args.get('selected_entry', type=str)
-    _,_,_,filename=FindFilname(selected_entry)
-    #jsonified = jsonify(random_text="Year {} file {} and filename {} selected.".format(selected_class, selected_entry, filename))
-    #sp_plotter(filename)
+    #selected_year = request.args.get('selected_year', type=str)
+    selected_spectrum = request.args.get('selected_spectrum', type=str)
+    _,_,_,filename=FindFilname(selected_spectrum)
     intensity, wavenumbers = read_cal_spec(filename)
-    jsonified = jsonify(intensity = intensity.tolist(), wavenumbers=np.round(wavenumbers,1).tolist())
+    jsonified = jsonify(intensity = intensity.tolist(),
+     wavenumbers=np.round(wavenumbers,1).tolist()) # this sends the intensity and the wavelength to be used by js plot functio
     return jsonified
 
 @app.route('/')
@@ -62,8 +55,10 @@ def index():
 
     class_entry_relations = get_dropdown_values()
 
-    default_classes = sorted(class_entry_relations.keys())
-    default_values = class_entry_relations[default_classes[0]]
+    default_years = sorted(class_entry_relations.keys())
+    default_spectra = class_entry_relations[default_years[0]]
     return render_template('index.html',
-                       all_classes=default_classes,
-                       all_entries=default_values)
+                       years=default_years,
+                       spectra=default_spectra,
+                       spec_image = '1105_1148.jpg'
+                       )
