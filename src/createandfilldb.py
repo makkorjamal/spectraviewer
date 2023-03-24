@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 from setup_db import Base, SPYear, Spectrum
 from sqlalchemy.sql import text
+from cv2 import imread
 
 engine = db.create_engine('sqlite:///spectra.db')
 Base.metadata.create_all(engine)
@@ -22,7 +23,7 @@ def Create_SPYear(year):
     session.add(spYear)
     session.commit()
 
-def Add_Spectrum(year, name, date, sp_filename, dg_filename, im_filename):
+def Add_Spectrum(year, name, date, sp_filename, dg_filename, im_filename, im_height):
     """
     Each year contains multiple measurements (Spectra)
     Each spectrum in the the database need to be initialised
@@ -35,6 +36,7 @@ def Add_Spectrum(year, name, date, sp_filename, dg_filename, im_filename):
         sp_filename=sp_filename,
         dg_filename=dg_filename,
         im_filename=im_filename,
+        im_height=im_height,
         date=date,
         year_id=spYear.id)
     session.add(additem)
@@ -62,13 +64,14 @@ def filldb(sp_path):
             name = sp_file.split('_')[1]
             dg_file = os.path.join(dig_path,f"{name}.dat")
             im_file = os.path.join(pic_path,f"{name}.jpg")
-            Add_Spectrum(year,name, str_date, sp_file, dg_file, im_file)
+            im_height = imread(im_file).shape[0]
+            Add_Spectrum(year,name, str_date, sp_file, dg_file, im_file,im_height)
         if year == 1951:
             name = sp_file.split('_')[1]
             dg_file = os.path.join(dig_path,f"{name}.dat")
             im_file = os.path.join(pic_path,f"{name}.jpg")
-            name = sp_file.split('_')[1]
-            Add_Spectrum(year,name,str_date, sp_file, dg_file, im_file)
+            im_height = imread(im_file).shape[0]
+            Add_Spectrum(year,name,str_date, sp_file, dg_file, im_file, im_height)
 
 def FetchAll(fetch_yr = False, fetch_sp = False):
     """
@@ -110,7 +113,7 @@ def FetchSameYear():
     return spDict
 def FindFilname(sp_date):
     item = session.query(Spectrum).filter_by(date=sp_date).one()
-    return item.id, item.name,item.date, item.sp_filename, item.dg_filename, item.im_filename
+    return item.id, item.name,item.date, item.sp_filename, item.dg_filename, item.im_filename, item.im_height
 
 if __name__ == '__main__':
     print('ELLO')

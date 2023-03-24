@@ -21,15 +21,16 @@ class Spectrum(Base):
     sp_filename = Column(String(250))
     dg_filename = Column(String(250))
     im_filename = Column(String(250))
+    im_height = Column(Integer)
     year_id = Column(Integer,ForeignKey('spyear.id'))
     spyear = relationship(SPYear) 
 
-    @property
+"""     @property
     def serialize(self):
        
        return {
            'name'         : self.name,
            'filename'         : self.filename,
            'id'         : self.id,
-       }
+       } """
  

@@ -7,14 +7,10 @@ import os
 from createandfilldb import FetchSameYear, FindFilname
 from utilfnc import read_cal_spec
 import numpy as np
-import pandas as pd
-
 # Initialize the Flask application
 
-global intensity, wavenumbers
 spimages = os.path.join('static','data', 'images')
 app = Flask(__name__, template_folder="webgui")
-app.config['UPLOAD_FOLDER'] = spimages
 def get_dropdown_values():
 
     class_entry_relations = FetchSameYear() 
@@ -40,14 +36,17 @@ def update_dropdown():
 def process_data():
     #selected_year = request.args.get('selected_year', type=str)
     selected_spectrum = request.args.get('selected_spectrum', type=str)
-    _,_,_,sp_filename,dg_filename,im_filename=FindFilname(selected_spectrum)
+    _,_,_,sp_filename,dg_filename,im_filename, im_size=FindFilname(selected_spectrum)
     intensity, wavenumbers = read_cal_spec(sp_filename)
     digitized_spec = np.loadtxt(dg_filename).tolist()
     jsonified = jsonify(intensity = intensity.tolist(),
     wavenumbers=np.round(wavenumbers,1).tolist(), 
     digitized_spec = digitized_spec,
     digitized_lbl = np.arange(len(digitized_spec)).tolist(),
-    im_filename = im_filename) # this sends the intensity and the wavelength to be used by js plot functio
+    im_filename = im_filename,
+    imheight = im_size
+    ) # this sends the intensity and the wavelength to be used by js plot functio
+
     return jsonified
 
 @app.route('/')
@@ -63,6 +62,5 @@ def index():
     default_spectra = class_entry_relations[default_years[0]]
     return render_template('index.html',
                        years=default_years,
-                       spectra=default_spectra,
-                       spec_image = '1105_1148.jpg'
+                       spectra=default_spectra
                        )
