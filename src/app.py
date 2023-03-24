@@ -1,6 +1,7 @@
 
 
 # app.py
+# based on dropdown code from https://stackoverflow.com/questions/25978879/how-to-create-chained-selectfield-in-flask-without-refreshing-the-page
 
 from flask import Flask, render_template, request, jsonify
 import os
