@@ -34,7 +34,6 @@
         <button type="button" style="color:white; background:#3498DB;" id="process_input">Plot!</button>
       </div><br><br>
       <div id="processed_results">
-        Choose the year and the filename to plot
       </div>
       <div>
         <canvas id="calChart" width="200" height="80"></canvas>
@@ -43,9 +42,10 @@
         <canvas id="digChart" width="200" height="80"></canvas>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-1.12.4.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" type="text/javascript"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="/js/chart.min.js"></script>
+    <script src="/js/spplotter.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
 
@@ -65,13 +65,13 @@
                 selected_spectrum: $('#spectra').val(),
 
 
-            }).success(function(data) {
-                chartPlotter(data.intensity, 
-                data.wavenumbers, 
-                data.digitized_spec,
-                data.digitized_lbl, 
-                data.im_filename,
-                data.imheight
+            }).success(function(spectrum) {
+                chartPlotter(spectrum.calibrated_in, 
+                spectrum.wavenumber_lbl, 
+                spectrum.digitized_in,
+                spectrum.pixel_lbl, 
+                spectrum.im_filename,
+                spectrum.imheight
                 )
             })
           return false;
@@ -79,104 +79,6 @@
         });
       });
     </script>
-    <script>
-          function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imheight) {
-            plotButton = document.getElementById("process_input");
-            plotButton.addEventListener("click", function(){
-            calChart.destroy();
-            digChart.destroy();
-            });
-            cal_ctx = document.getElementById('calChart').getContext('2d');
-            dig_ctx = document.getElementById('digChart').getContext('2d');
-            calChart = new Chart(cal_ctx, {
-            type: 'line',
-              data: {
-                labels: sp_labels, 
-                datasets: [{
-                  label: 'Calibrated Spectrum',
-                  data: data_cal, // Data on Y axis
-                  borderWidth: 1,
-                  fill: false,
-                  borderColor: "#0000ff",
-                  lineTension: 0.4,
-                  backgroundColor: "#0000ff",
-                  pointBackgroundColor: "#0000ff",
-                  pointBorderColor: "#0000ff",
-                  pointHoverBackgroundColor: "#0000ff",
-                  pointHoverBorderColor: "#0000ff",
-                  pointRadius: 0
-              }]
-              },
-            options: {
-              // All of these (default) events trigger a hover and are passed to all plugins,
-              // unless limited at plugin options
-              events: ['mousemove', 'mouseout', 'click'],
-              plugins: {
-                tooltip: {
-                  // Tooltip will only receive click events
-                  events: ['mousemove']
-                }
-              }
-            }
-            });
-            const chartAreaImg = {
-                id: 'chartAreaImg',
-
-                beforeDraw(chart, args, options) {
-                const { ctx, chartArea: { left, top, width, height } } = chart;
-                ctx.strokeStyle = options.borderColor;
-                ctx.lineWidth = options.borderWidth;
-                ctx.setLineDash(options.borderDash || []);
-                ctx.lineDashOffset = options.borderDashOffset;
-                ctx.strokeRect(left, top, width, height);
-                ctx.save();
-                const image = new Image();
-                image.src = im_filename;
-                ctx.drawImage(image, left,top, width, height);
-                ctx.restore();
-                }
-              };
-            digChart = new Chart(dig_ctx, {
-            type: 'line',
-              data: {
-                labels: dig_labels, 
-                datasets: [{
-                  label: 'Digitized Spectrum',
-                  data: data_dig, // Data on Y axis
-                  borderWidth: 1,
-                  fill: false,
-                  borderColor: "#1e1e1e",
-                  lineTension: 0.4,
-                  backgroundColor: "#1e1e1e",
-                  pointBackgroundColor: "#1e1e1e",
-                  pointBorderColor: "#1e1e1e",
-                  pointHoverBackgroundColor: "#1e1e1e",
-                  pointHoverBorderColor: "#1e1e1e",
-                  pointRadius: 0,                  
-                  borderWidth: 1,
-              }]
-              },
-              plugins: [ chartAreaImg ],
-              options: {
-                plugins: {
-                  chartAreaImg: {
-                        borderColor: 'red',
-                        borderWidth: 2,
-                        borderDash: [ 5, 5 ],
-                        borderDashOffset: 2,
-                  }
-                },
-                  scales: {
-                    y: {
-                        min: 0,
-                        max: imheight
-                    }
-    }
-              },
-
-          });
-          }
-</script>
   </body>
 </html>
 

@@ -14,7 +14,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-def Create_SPYear(year):
+def createSPYear(year):
     """ 
     Create a Spectra year
     you need to provide a year. Example Create_SPYear(1951)
@@ -23,7 +23,7 @@ def Create_SPYear(year):
     session.add(spYear)
     session.commit()
 
-def Add_Spectrum(year, name, date, sp_filename, dg_filename, im_filename, im_height):
+def addSpectrum(year, name, date, sp_filename, dg_filename, im_filename, im_height):
     """
     Each year contains multiple measurements (Spectra)
     Each spectrum in the the database need to be initialised
@@ -53,8 +53,8 @@ def filldb(sp_path):
 
     sp_files = glob(f"{cal_path}" + "/*.dat")
     print(sp_files)
-    Create_SPYear('1950')
-    Create_SPYear('1951')
+    createSPYear('1950')
+    createSPYear('1951')
     for sp_file in zip(sp_files):
         sp_file = sp_file[0]
         date =datetime.strptime(sp_file.split('_')[1], '%d%m%Y%H%M%S%f')
@@ -65,15 +65,15 @@ def filldb(sp_path):
             dg_file = os.path.join(dig_path,f"{name}.dat")
             im_file = os.path.join(pic_path,f"{name}.jpg")
             im_height = imread(im_file).shape[0]
-            Add_Spectrum(year,name, str_date, sp_file, dg_file, im_file,im_height)
+            addSpectrum(year,name, str_date, sp_file, dg_file, im_file.replace('static',''),im_height)
         if year == 1951:
             name = sp_file.split('_')[1]
             dg_file = os.path.join(dig_path,f"{name}.dat")
             im_file = os.path.join(pic_path,f"{name}.jpg")
             im_height = imread(im_file).shape[0]
-            Add_Spectrum(year,name,str_date, sp_file, dg_file, im_file, im_height)
+            addSpectrum(year,name,str_date, sp_file, dg_file, im_file.replace('static',''), im_height)
 
-def FetchAll(fetch_yr = False, fetch_sp = False):
+def fetchAll(fetch_yr = False, fetch_sp = False):
     """
     This ones fetches the items from all tables in the database.
     """
@@ -93,7 +93,7 @@ def FetchAll(fetch_yr = False, fetch_sp = False):
             print ("Date", item.date)
             print ("Year Id", item.year_id)
         return items
-def FetchSameYear():
+def fetchSameYear():
     """
     This function fetches only spectra that belong to the same year
     This is useful to publich the dropdown menu in the web gui
@@ -111,7 +111,7 @@ def FetchSameYear():
             lst_sp.append( sp.date)
         spDict[key] = lst_sp
     return spDict
-def FindFilname(sp_date):
+def findFilname(sp_date):
     item = session.query(Spectrum).filter_by(date=sp_date).one()
     return item.id, item.name,item.date, item.sp_filename, item.dg_filename, item.im_filename, item.im_height
 
