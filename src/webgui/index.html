@@ -45,13 +45,14 @@
        </div>
       </div>
       <div class="mainbar">
+      <div id = "loader" class="loader"></div> 
       <div id="processed_results">
+      </div>
       <div>
         <canvas id="calChart" width="200" height="80"></canvas>
       </div>
       <div>
         <canvas id="digChart" width="200" height="80"></canvas>
-      </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" type="text/javascript"></script>
@@ -63,7 +64,7 @@
     <script src="/js/spplotter.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
-
+        let mLoader = document.getElementById("loader");
         $('#years').change(function(){
 
           $.getJSON('/_update_dropdown', {
@@ -74,13 +75,13 @@
            })
         });
         $('#process_input').bind('click', function() {
-
+            mLoader.style.visibility="visible";
             $.getJSON('/_process_data', {
                 selected_year: $('#years').val(),
                 selected_spectrum: $('#spectra').val(),
-
-
-            }).success(function(spectrum) {
+            }
+            ).success(function(spectrum) {
+                mLoader.style.visibility="hidden";
                 chartPlotter(spectrum.calibrated_in, 
                 spectrum.wavenumber_lbl, 
                 spectrum.digitized_in,

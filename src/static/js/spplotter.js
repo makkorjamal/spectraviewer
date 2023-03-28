@@ -108,14 +108,14 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
               max: imheight,
               title: {
                 display: true,
-                text: 'Pixel'
+                text: 'Pixels'
             }
           },
 
         x: {
               title: {
                 display: true,
-                text: 'Pixel'
+                text: 'Pixels'
             }
           }
 }
