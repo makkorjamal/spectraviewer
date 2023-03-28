@@ -70,6 +70,7 @@ def filldb(sp_path):
             name = sp_file.split('_')[1]
             dg_file = os.path.join(dig_path,f"{name}.dat")
             im_file = os.path.join(pic_path,f"{name}.jpg")
+            print(im_file + ' ' + dg_file + ' ' + sp_file)
             im_height = imread(im_file).shape[0]
             addSpectrum(year,name,str_date, sp_file, dg_file, im_file.replace('static',''), im_height)
 

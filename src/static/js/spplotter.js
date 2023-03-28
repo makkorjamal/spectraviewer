@@ -34,7 +34,24 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
         // Tooltip will only receive click events
         events: ['mousemove']
       }
-    }
+    },
+    
+    scales: {
+        y: {
+              min: 0,
+              title: {
+                display: true,
+                text: 'Intensity'
+            }
+          },
+
+        x: {
+              title: {
+                display: true,
+                text: 'Wavenumber'
+            }
+          }
+}
   }
   });
   const chartAreaImg = {
@@ -86,9 +103,20 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
         }
       },
         scales: {
-          y: {
+        y: {
               min: 0,
-              max: imheight
+              max: imheight,
+              title: {
+                display: true,
+                text: 'Pixel'
+            }
+          },
+
+        x: {
+              title: {
+                display: true,
+                text: 'Pixel'
+            }
           }
 }
     },
