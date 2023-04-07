@@ -42,21 +42,25 @@ def process_data():
     im_filename = im_filename,
     imheight = imheight
     ) # this sends the intensity and the wavelength to be used by js plot functio
-
     return jsonified
+@app.route('/_draw_table')
+def callback():
+    print('called')
+    data_table = {'Start Time':'00:00', 'Stop Time':'12:00','start SZA' : 27
+                  , 'stop SZA':80, 'Apodization':'Triangular','Resolution': 0.25}
+    s = ''
+    for k,v in data_table.items():
+        s+=f'<tr><th>{k}</th><td>{v}</td></tr>'
+    return jsonify(table_data = s)
 
 @app.route('/')
 def index():
 
-    """
-    initialize drop down menus
-    """
-
     years_data = fetchSameYear()
-
     default_years = sorted(years_data.keys())
     default_spectra = years_data[default_years[0]]
-    return render_template('index.html',
+    stemp = render_template('spec_select.html',
                        years=default_years,
-                       spectra=default_spectra
-                       )
+                       spectra=default_spectra,
+                       table_data = {})    
+    return stemp

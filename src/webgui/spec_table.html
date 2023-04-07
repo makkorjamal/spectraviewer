@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+{% block spec_table %}
+  <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, value in table_data.items() %}
+        <tr>
+          <th>{{ key }}</td>
+          <td>{{ value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,42 +1,67 @@
-function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imheight) {
+function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imheight){
   plotButton = document.getElementById("process_input");
   plotButton.addEventListener("click", function(){
   calChart.destroy();
   digChart.destroy();
   });
+  cal_data = {
+     labels: sp_labels,
+     datasets: [{
+      label: 'Calibrated spectrum',
+      data: data_cal,
+      backgroundColor: "blue",       
+      borderWidth: 1,
+      fill: false,
+      borderColor: "#0000ff",
+      lineTension: 0.4,
+      backgroundColor: "#0000ff",
+      pointBackgroundColor: "#0000ff",
+      pointBorderColor: "#0000ff",
+      pointHoverBackgroundColor: "#0000ff",
+      pointHoverBorderColor: "#0000ff",
+      pointRadius: 0
+    }]
+};
+  dig_data = {
+     labels: dig_labels,
+     datasets: [{
+      label: 'Digitized spectrum',
+      data: data_dig,
+      backgroundColor: "black",       
+      borderWidth: 1,
+      fill: false,
+      borderColor: "#0000ff",
+      lineTension: 0.4,
+      backgroundColor: "#0000ff",
+      pointBackgroundColor: "#0000ff",
+      pointBorderColor: "#0000ff",
+      pointHoverBackgroundColor: "#0000ff",
+      pointHoverBorderColor: "#0000ff",
+      pointRadius: 0
+    }]
+};
+  image = new Image();
+  image.src = im_filename;
+
+  const chartAreaImg = {
+    id: 'chartAreaImg',
+    beforeDraw: (chart) => {
+      if (image.complete) {
+        const ctx = chart.ctx;
+        const {top, left, width, height} = chart.chartArea;
+        ctx.drawImage(image, left, top, width, height);
+      } else {
+        image.onload = () => chart.draw();
+      }
+    }
+  };
+  
   cal_ctx = document.getElementById('calChart').getContext('2d');
   dig_ctx = document.getElementById('digChart').getContext('2d');
   calChart = new Chart(cal_ctx, {
-  type: 'line',
-    data: {
-      labels: sp_labels, 
-      datasets: [{
-        label: 'Calibrated Spectrum',
-        data: data_cal, // Data on Y axis
-        borderWidth: 1,
-        fill: false,
-        borderColor: "#0000ff",
-        lineTension: 0.4,
-        backgroundColor: "#0000ff",
-        pointBackgroundColor: "#0000ff",
-        pointBorderColor: "#0000ff",
-        pointHoverBackgroundColor: "#0000ff",
-        pointHoverBorderColor: "#0000ff",
-        pointRadius: 0
-    }]
-    },
-  options: {
-    // All of these (default) events trigger a hover and are passed to all plugins,
-    // unless limited at plugin options
-    events: ['mousemove', 'mouseout', 'click'],
-    plugins: {
-      tooltip: {
-        // Tooltip will only receive click events
-        events: ['mousemove']
-      }
-    },
-    
-    scales: {
+    type: 'line',
+    data: cal_data,
+    options: {    scales: {
         y: {
               min: 0,
               title: {
@@ -51,47 +76,16 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
                 text: 'Wavenumber'
             }
           }
-}
-  }
-  });
-  const chartAreaImg = {
-      id: 'chartAreaImg',
+        },
+      plugins: {
 
-      beforeDraw(chart, args, options) {
-      const { ctx, chartArea: { left, top, width, height } } = chart;
-      ctx.strokeStyle = options.borderColor;
-      ctx.lineWidth = options.borderWidth;
-      ctx.setLineDash(options.borderDash || []);
-      ctx.lineDashOffset = options.borderDashOffset;
-      ctx.strokeRect(left, top, width, height);
-      ctx.save();
-      image = new Image();
-      image.src = im_filename;
-      console.log('Hello')
-      ctx.drawImage(image, left,top, width, height);
-      ctx.restore();
+
       }
-    };
+    }
+  });
   digChart = new Chart(dig_ctx, {
-  type: 'line',
-    data: {
-      labels: dig_labels, 
-      datasets: [{
-        label: 'Digitized Spectrum',
-        data: data_dig, // Data on Y axis
-        borderWidth: 1,
-        fill: false,
-        borderColor: "#1e1e1e",
-        lineTension: 0.4,
-        backgroundColor: "#1e1e1e",
-        pointBackgroundColor: "#1e1e1e",
-        pointBorderColor: "#1e1e1e",
-        pointHoverBackgroundColor: "#1e1e1e",
-        pointHoverBorderColor: "#1e1e1e",
-        pointRadius: 0,                  
-        borderWidth: 1,
-    }]
-    },
+    type: 'line',
+    data: dig_data,
     plugins: [ chartAreaImg ],
     options: {
       plugins: {
@@ -100,9 +94,9 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
               borderWidth: 2,
               borderDash: [ 5, 5 ],
               borderDashOffset: 2,
-        }
+        },      
       },
-        scales: {
+      scales: {
         y: {
               min: 0,
               max: imheight,
@@ -118,8 +112,7 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
                 text: 'Pixels'
             }
           }
-}
-    },
-
-});
+      }  
+    }
+  });
 }

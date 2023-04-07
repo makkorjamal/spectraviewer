@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" 
-    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" 
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+
     <link href="/css/sidebar.css" rel="stylesheet">
   </head>
   <body>
@@ -17,37 +18,16 @@
       <div class="header">
         <h2 class="text-center text-muted">Jungfraujoch Spectra Plotter</h1>
       </div>
-
-      <br><br><br>
-
-      <div class="row">
-        <div class="form-group col-xs-2">
-          <label for="years">Select a year</label>
-          <select class="form-control" style="color: white; background: #34568B;" id="years">
-            {% for o in years %}
-                    <option value="{{ o }}">{{ o }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="form-group col-xs-2">
-          <label for="spectra">&nbspand a Spectrum</label>
-          <select class="form-control" style="color:white; background:#009B77;" id="spectra">
-            {% for o in spectra %}
-                    <option value="{{ o }}">{{ o }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <button type="button" style="color:white; background:#3498DB;" id="process_input">Plot!</button>
-      </div><br><br>
+       <div>
+        {% block spec_select %}{% endblock %}
+       </div>
        </div>
       </div>
       <div class="mainbar">
       <div id = "loader" class="loader"></div> 
       <div id="processed_results">
       </div>
+
       <div>
         <canvas id="calChart" width="200" height="80"></canvas>
       </div>
@@ -55,13 +35,18 @@
         <canvas id="digChart" width="200" height="80"></canvas>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js" type="text/javascript"></script>
-    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" 
-    integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
-      </div>
-    <script src="/js/chart.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" 
+      integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" 
+      crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" 
+      integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" 
+      crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/js/spplotter.js"></script>
+
     <script type="text/javascript">
       $(document).ready(function() {
         let mLoader = document.getElementById("loader");
@@ -70,26 +55,32 @@
           $.getJSON('/_update_dropdown', {
             selected_year: $('#years').val()
 
-          }).success(function(data) {
+          }).done(function(data) {
                 $('#spectra').html(data.html_string_selected);
            })
         });
         $('#process_input').bind('click', function() {
-            mLoader.style.visibility="visible";
+            mLoader.style.visibility="visible";            
+            $.getJSON('/_draw_table', {
+                selected_year: $('#years').val(),
+                selected_spectrum: $('#spectra').val(),
+            }).done((data) => {
+              $('#stable').html(data.table_data)
+            });
             $.getJSON('/_process_data', {
                 selected_year: $('#years').val(),
                 selected_spectrum: $('#spectra').val(),
             }
-            ).success(function(spectrum) {
+            ).done(function(spectrum) {
                 mLoader.style.visibility="hidden";
-                chartPlotter(spectrum.calibrated_in, 
-                spectrum.wavenumber_lbl, 
+                chartPlotter(spectrum.calibrated_in,
+                spectrum.wavenumber_lbl,
                 spectrum.digitized_in,
-                spectrum.pixel_lbl, 
+                spectrum.pixel_lbl,
                 spectrum.im_filename,
-                spectrum.imheight
-                )
-            })
+                spectrum.imheight);
+            });         
+
           return false;
 
         });
@@ -97,4 +88,3 @@
     </script>
   </body>
 </html>
-

@@ -62,13 +62,13 @@ def filldb(sp_path):
         year =date.year 
         if year == 1950:
             name = sp_file.split('_')[1]
-            dg_file = os.path.join(dig_path,f"{name}.dat")
+            dg_file = os.path.join(dig_path,f"jfj_{name}_digitized.dat")
             im_file = os.path.join(pic_path,f"{name}.jpg")
             im_height = imread(im_file).shape[0]
             addSpectrum(year,name, str_date, sp_file, dg_file, im_file.replace('static',''),im_height)
         if year == 1951:
             name = sp_file.split('_')[1]
-            dg_file = os.path.join(dig_path,f"{name}.dat")
+            dg_file = os.path.join(dig_path,f"jfj_{name}_digitized.dat")
             im_file = os.path.join(pic_path,f"{name}.jpg")
             print(im_file + ' ' + dg_file + ' ' + sp_file)
             im_height = imread(im_file).shape[0]
