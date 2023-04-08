@@ -24,13 +24,3 @@ class Spectrum(Base):
     im_height = Column(Integer)
     year_id = Column(Integer,ForeignKey('spyear.id'))
     spyear = relationship(SPYear) 
-
-"""     @property
-    def serialize(self):
-       
-       return {
-           'name'         : self.name,
-           'filename'         : self.filename,
-           'id'         : self.id,
-       } """
- 

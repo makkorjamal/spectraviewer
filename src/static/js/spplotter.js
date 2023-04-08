@@ -30,13 +30,13 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
       backgroundColor: "black",       
       borderWidth: 1,
       fill: false,
-      borderColor: "#0000ff",
+      borderColor: "#1e1e1e",
       lineTension: 0.4,
-      backgroundColor: "#0000ff",
-      pointBackgroundColor: "#0000ff",
-      pointBorderColor: "#0000ff",
-      pointHoverBackgroundColor: "#0000ff",
-      pointHoverBorderColor: "#0000ff",
+      backgroundColor: "#1e1e1e",
+      pointBackgroundColor: "#1e1e1e",
+      pointBorderColor: "#1e1e1e",
+      pointHoverBackgroundColor: "#1e1e1e",
+      pointHoverBorderColor: "#1e1e1e",
       pointRadius: 0
     }]
 };

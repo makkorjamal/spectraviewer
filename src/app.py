@@ -1,7 +1,9 @@
 
 
 # app.py
-# based on dropdown code from https://stackoverflow.com/questions/25978879/how-to-create-chained-selectfield-in-flask-without-refreshing-the-page
+# based on dropdown code from 
+#https://stackoverflow.com/questions/25978879/
+#how-to-create-chained-selectfield-in-flask-without-refreshing-the-page
 
 from flask import Flask, render_template, request, jsonify
 import os
@@ -17,20 +19,18 @@ app = Flask(__name__,
 
 @app.route('/_update_dropdown')
 def update_dropdown():
-    """
-    Flask function to publich the values from the database in the drop down menu
-    """
+
     selected_year = request.args.get('selected_year', type=str)
     updated_values = fetchSameYear()[selected_year]
-    html_string_selected = ''
-    for entry in updated_values:
-        html_string_selected += f'<option value="{entry}">{entry}</option>'
+    shtml = ''
+    for opt in updated_values:
+        shtml += f'<option value="{opt}">{opt}</option>'
 
-    return jsonify(html_string_selected=html_string_selected)
+    return jsonify(shtml=shtml)
 
 
-@app.route('/_process_data')
-def process_data():
+@app.route('/_plot_data')
+def plot_data():
     selected_spectrum = request.args.get('selected_spectrum', type=str)
     _,_,_,sp_filename,dg_filename,im_filename, imheight=findFilname(selected_spectrum)
     intensity, wavenumbers = read_cal_spec(sp_filename)
@@ -44,18 +44,18 @@ def process_data():
     ) # this sends the intensity and the wavelength to be used by js plot functio
     return jsonified
 @app.route('/_draw_table')
-def callback():
-    print('called')
+def draw_table():
+    selected_spectrum = request.args.get('selected_spectrum', type=str)
     data_table = {'Start Time':'00:00', 'Stop Time':'12:00','start SZA' : 27
                   , 'stop SZA':80, 'Apodization':'Triangular','Resolution': 0.25}
-    s = ''
-    for k,v in data_table.items():
-        s+=f'<tr><th>{k}</th><td>{v}</td></tr>'
-    return jsonify(table_data = s)
+    print(selected_spectrum)
+    shtml = ''
+    for ke,va in data_table.items():
+        shtml += f'<tr><th>{ke}</th><td>{va}</td></tr>'
+    return jsonify(shtml = shtml)
 
 @app.route('/')
 def index():
-
     years_data = fetchSameYear()
     default_years = sorted(years_data.keys())
     default_spectra = years_data[default_years[0]]
