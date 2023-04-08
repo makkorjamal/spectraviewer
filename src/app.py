@@ -10,6 +10,7 @@ import os
 from createandfilldb import fetchSameYear, findFilname
 from utilfnc import read_cal_spec
 import numpy as np
+import pandas as pd
 # Initialize the Flask application
 
 app = Flask(__name__,
@@ -46,12 +47,14 @@ def plot_data():
 @app.route('/_draw_table')
 def draw_table():
     selected_spectrum = request.args.get('selected_spectrum', type=str)
-    data_table = {'Start Time':'00:00', 'Stop Time':'12:00','start SZA' : 27
-                  , 'stop SZA':80, 'Apodization':'Triangular','Resolution': 0.25}
-    print(selected_spectrum)
+    tabs = os.path.join('static/data/tables.dat')
+    dataf = pd.read_csv(tabs, sep = '\s+')
+    data_table = dataf.loc[(dataf['Date'].isin(selected_spectrum.split())) 
+                           & (dataf['Start Time']
+                              .isin(selected_spectrum.split()))].to_dict('list')
     shtml = ''
     for ke,va in data_table.items():
-        shtml += f'<tr><th>{ke}</th><td>{va}</td></tr>'
+        shtml += f'<tr><th>{ke}</th><td>{va[0]}</td></tr>'
     return jsonify(shtml = shtml)
 
 @app.route('/')

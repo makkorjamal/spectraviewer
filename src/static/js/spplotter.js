@@ -42,7 +42,6 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
 };
   image = new Image();
   image.src = im_filename;
-
   const chartAreaImg = {
     id: 'chartAreaImg',
     beforeDraw: (chart) => {

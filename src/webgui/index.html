@@ -45,30 +45,33 @@
     <script src="/js/spplotter.js"></script>
 
     <script type="text/javascript">
-      $(document).ready(function() {
+      $(document).ready(() => {
         let mLoader = document.getElementById("loader");
-        $('#years').change(function(){
+        $('#years').change(() => {
 
           $.getJSON('/_update_dropdown', {
             selected_year: $('#years').val()
 
-          }).done(function(data) {
+          }).done((data) => {
                 $('#spectra').html(data.shtml);
            })
         });
-        $('#process_input').bind('click', function() {
-            mLoader.style.visibility="visible";            
-            $.getJSON('/_draw_table', {
+        $('#spectra').change(() => {
+          $.getJSON('/_draw_table', {
                 selected_year: $('#years').val(),
                 selected_spectrum: $('#spectra').val(),
             }).done((data) => {
               $('#stable').html(data.shtml)
-            });
+            })
+        });
+        $('#process_input').bind('click', function() {
+            mLoader.style.visibility="visible";            
+
             $.getJSON('/_plot_data', {
                 selected_year: $('#years').val(),
                 selected_spectrum: $('#spectra').val(),
             }
-            ).done(function(spectrum) {
+            ).done((spectrum) => {
                 mLoader.style.visibility="hidden";
                 chartPlotter(spectrum.calibrated_in,
                 spectrum.wavenumber_lbl,
@@ -83,4 +86,4 @@
       });
     </script>
   </body>
-</html>
+</html> 
