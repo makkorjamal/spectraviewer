@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" 
-    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/sidebar.css" rel="stylesheet">
   </head>
   <body>
@@ -23,10 +21,10 @@
        </div>
       </div>
       <div class="mainbar">
-      <div id = "loader" class="loader"></div> 
-      <div id="processed_results">
-      </div>
+      <div id = "ploader" class="loader"></div> 
+      <div id = 'plotit'>
 
+      </div>
       <div>
         <canvas id="calChart" width="200" height="80"></canvas>
       </div>
@@ -34,19 +32,14 @@
         <canvas id="digChart" width="200" height="80"></canvas>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js" 
-      integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" 
-      crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" 
-      integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" 
-      crossorigin="anonymous"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/chart.js"></script>
     <script src="/js/spplotter.js"></script>
 
     <script type="text/javascript">
       $(document).ready(() => {
-        let mLoader = document.getElementById("loader");
+        let mLoader = document.getElementById("ploader");
         $('#years').change(() => {
 
           $.getJSON('/_update_dropdown', {
@@ -56,7 +49,7 @@
                 $('#spectra').html(data.shtml);
            })
         });
-        $('#spectra').change(() => {
+        $('#spectra').click(() => {
           $.getJSON('/_draw_table', {
                 selected_year: $('#years').val(),
                 selected_spectrum: $('#spectra').val(),
@@ -65,20 +58,14 @@
             })
         });
         $('#process_input').bind('click', function() {
-            mLoader.style.visibility="visible";            
-
+            mLoader.style.visibility="visible";
             $.getJSON('/_plot_data', {
                 selected_year: $('#years').val(),
                 selected_spectrum: $('#spectra').val(),
             }
             ).done((spectrum) => {
                 mLoader.style.visibility="hidden";
-                chartPlotter(spectrum.calibrated_in,
-                spectrum.wavenumber_lbl,
-                spectrum.digitized_in,
-                spectrum.pixel_lbl,
-                spectrum.im_filename,
-                spectrum.imheight);
+                spectrumViewer(spectrum);
             });         
           return false;
 

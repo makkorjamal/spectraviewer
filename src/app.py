@@ -35,13 +35,17 @@ def plot_data():
     selected_spectrum = request.args.get('selected_spectrum', type=str)
     _,_,_,sp_filename,dg_filename,im_filename, imheight=findFilname(selected_spectrum)
     intensity, wavenumbers = read_cal_spec(sp_filename)
+    class Calibrated:
+        ints = intensity.tolist()
+        wvs = wavenumbers.tolist()
     digitized_in = np.loadtxt(dg_filename).tolist()
     jsonified = jsonify(calibrated_in = intensity.tolist(),
     wavenumber_lbl=np.round(wavenumbers,1).tolist(), 
     digitized_in = digitized_in,
     pixel_lbl = np.arange(len(digitized_in)).tolist(),
     im_filename = im_filename,
-    imheight = imheight
+    imheight = imheight,
+    calibrated = Calibrated().__dict__
     ) # this sends the intensity and the wavelength to be used by js plot functio
     return jsonified
 @app.route('/_draw_table')

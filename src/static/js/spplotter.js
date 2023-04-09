@@ -1,14 +1,15 @@
-function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imheight){
+function spectrumViewer(spectrum){
+  var {calibrated_in, wavenumber_lbl,digitized_in,pixel_lbl,im_filename,imheight} = spectrum
   plotButton = document.getElementById("process_input");
-  plotButton.addEventListener("click", function(){
+  plotButton.addEventListener("click", () => {
   calChart.destroy();
   digChart.destroy();
   });
   cal_data = {
-     labels: sp_labels,
+     labels: wavenumber_lbl,
      datasets: [{
       label: 'Calibrated spectrum',
-      data: data_cal,
+      data: calibrated_in,
       backgroundColor: "blue",       
       borderWidth: 1,
       fill: false,
@@ -23,10 +24,10 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
     }]
 };
   dig_data = {
-     labels: dig_labels,
+     labels: pixel_lbl,
      datasets: [{
       label: 'Digitized spectrum',
-      data: data_dig,
+      data: digitized_in,
       backgroundColor: "black",       
       borderWidth: 1,
       fill: false,
@@ -55,8 +56,8 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
     }
   };
   
-  cal_ctx = document.getElementById('calChart').getContext('2d');
-  dig_ctx = document.getElementById('digChart').getContext('2d');
+  cal_ctx = $('#calChart')[0].getContext('2d');
+  dig_ctx = $('#digChart')[0].getContext('2d');
   calChart = new Chart(cal_ctx, {
     type: 'line',
     data: cal_data,
@@ -68,7 +69,6 @@ function chartPlotter(data_cal, sp_labels,data_dig, dig_labels, im_filename, imh
                 text: 'Intensity'
             }
           },
-
         x: {
               title: {
                 display: true,
