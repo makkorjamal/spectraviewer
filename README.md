@@ -1,4 +1,5 @@
 # spectraviewer
 A simple tool to view the old digitized jungfraujoch spectra online
-demo [here](https://spectra.makkor.eu)
+## Demp
+Follow this link [here](https://spectra.makkor.eu)
 
