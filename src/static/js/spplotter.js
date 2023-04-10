@@ -5,42 +5,27 @@ function spectrumViewer(spectrum){
   calChart.destroy();
   digChart.destroy();
   });
-  cal_data = {
-     labels: wavenumber_lbl,
-     datasets: [{
-      label: 'Calibrated spectrum',
-      data: calibrated_in,
-      backgroundColor: "blue",       
-      borderWidth: 1,
-      fill: false,
-      borderColor: "#0000ff",
-      lineTension: 0.4,
-      backgroundColor: "#0000ff",
-      pointBackgroundColor: "#0000ff",
-      pointBorderColor: "#0000ff",
-      pointHoverBackgroundColor: "#0000ff",
-      pointHoverBorderColor: "#0000ff",
-      pointRadius: 0
-    }]
+  function fillData(data, labels, color){
+      draw_data = {
+      labels: labels,
+      datasets: [{
+        label: 'Digitized spectrum',
+        data: data,
+        backgroundColor: color,       
+        borderWidth: 1,
+        fill: false,
+        borderColor: color,
+        lineTension: 0.4,
+        backgroundColor: color,
+        pointBackgroundColor: color,
+        pointBorderColor: color,
+        pointHoverBackgroundColor: color,
+        pointHoverBorderColor: color,
+        pointRadius: 0
+      }]
   };
-  dig_data = {
-     labels: pixel_lbl,
-     datasets: [{
-      label: 'Digitized spectrum',
-      data: digitized_in,
-      backgroundColor: "black",       
-      borderWidth: 1,
-      fill: false,
-      borderColor: "#1e1e1e",
-      lineTension: 0.4,
-      backgroundColor: "#1e1e1e",
-      pointBackgroundColor: "#1e1e1e",
-      pointBorderColor: "#1e1e1e",
-      pointHoverBackgroundColor: "#1e1e1e",
-      pointHoverBorderColor: "#1e1e1e",
-      pointRadius: 0
-    }]
-};
+  return draw_data
+  }
   image = new Image();
   image.src = im_filename;
   const chartAreaImg = {
@@ -60,7 +45,7 @@ function spectrumViewer(spectrum){
   dig_ctx = $('#digChart')[0].getContext('2d');
   calChart = new Chart(cal_ctx, {
     type: 'line',
-    data: cal_data,
+    data: fillData(calibrated_in, wavenumber_lbl, "#0000ff"),
     options: {    scales: {
         y: {
               min: 0,
@@ -84,7 +69,7 @@ function spectrumViewer(spectrum){
   });
   digChart = new Chart(dig_ctx, {
     type: 'line',
-    data: dig_data,
+    data: fillData(digitized_in, pixel_lbl,"#1e1e1e"),
     plugins: [ chartAreaImg ],
     options: {
       plugins: {
