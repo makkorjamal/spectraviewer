@@ -106,6 +106,7 @@ hr.rounded {
   height: 80px;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
+  animation-play-state: paused;
   margin:auto;
   left:0;
   right:0;

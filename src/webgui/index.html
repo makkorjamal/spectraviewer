@@ -40,6 +40,7 @@
     <script type="text/javascript">
       $(document).ready(() => {
         let mLoader = document.getElementById("ploader");
+        mLoader.style.animationPlayState = "running"; ;
         $('#years').change(() => {
 
           $.getJSON('/_update_dropdown', {
@@ -57,7 +58,7 @@
               $('#stable').html(data.shtml)
             })
         });
-        $('#process_input').bind('click', function() {
+        $('#process_input').bind('click', () => {
             mLoader.style.visibility="visible";
             $.getJSON('/_plot_data', {
                 selected_year: $('#years').val(),
@@ -65,6 +66,7 @@
             }
             ).done((spectrum) => {
                 mLoader.style.visibility="hidden";
+                mLoader.style.animationPlayState = "paused"; ;
                 spectrumViewer(spectrum);
             });         
           return false;

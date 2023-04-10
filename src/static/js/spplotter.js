@@ -22,7 +22,7 @@ function spectrumViewer(spectrum){
       pointHoverBorderColor: "#0000ff",
       pointRadius: 0
     }]
-};
+  };
   dig_data = {
      labels: pixel_lbl,
      datasets: [{
